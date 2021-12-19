@@ -1,12 +1,12 @@
 version: "3"
+
 services:
-  app:
-    image: python:3.8.5
+  database:
+    image: mysql:latest
     working_dir: /usr/src/app
-    tty: true # keep container alive without default command
-    ports:
-      - "8000:8000"
     volumes:
-      ["./:/usr/src/app", "site-packages:/usr/local/lib/python3.8/site-packages"]
+      ["./:/usr/src/app", "mysql:/var/lib/mysql"]
+    restart: always
+    env_file: .env
 volumes:
-  site-packages:
+  mysql:
