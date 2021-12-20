@@ -17,20 +17,23 @@ echo What is the MySQL user password?;
 
 read MYSQL_USER_PASSWORD;
 
-echo What is the name of the database?;
-
-read DATABASE_NAME;
-
-# Create .env file
+# Set up .env file
 
 touch .env;
 
 echo "
-# service: mysql db
+# service: db
 MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD
-MYSQL_DATABASE=$DATABASE_NAME
+MYSQL_DATABASE=wordpress
 MYSQL_USER=$MYSQL_USER
 MYSQL_PASSWORD=$MYSQL_USER_PASSWORD
+# service: phpmyadmin
+PMA_HOST=db
+MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD
+# service: wordpress
+WORDPRESS_DB_HOST=db:3306
+WORDPRESS_DB_USER=$MYSQL_USER
+WORDPRESS_DB_PASSWORD=$MYSQL_USER_PASSWORD
 " > .env
 
 echo Created .env file;
