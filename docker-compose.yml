@@ -1,12 +1,45 @@
-version: "3"
-
+---
+# mysql-workbench template: https://hub.docker.com/r/linuxserver/mysql-workbench
+# mysql template: https://hub.docker.com/_/mysql
+version: "2.1"
 services:
+  mysql-workbench:
+    container_name: mysql-workbench
+    depends_on:
+      - database
+    image: lscr.io/linuxserver/mysql-workbench
+    # PUID/PGID allows containers to map internal users to a user on the host machine
+    # https://docs.linuxserver.io/general/understanding-puid-and-pgid
+    # timezone reference: https://en.wikipedia.org/wiki/Tz_database
+    environment:
+      - PUID=0
+      - PGID=0
+      - TZ=America/New_York
+    ports:
+      - 3000:3000
+    cap_add:
+      - IPC_LOCK
+    restart: unless-stopped
+    env_file: .env
+    networks:
+      - mysql-gui
   database:
+    container_name: mysql-database
     image: mysql:latest
     working_dir: /usr/src/app
     volumes:
       ["./:/usr/src/app", "mysql:/var/lib/mysql"]
+    ports:
+      - "3306:3306"
+    # SYS_NICE cap fixes "sql mbind: Operation not permitted" error
+    # https://stackoverflow.com/questions/55559386/how-to-fix-mbind-operation-not-permitted-in-mysql-error-log
+    cap_add:
+      - SYS_NICE
     restart: always
     env_file: .env
+    networks:
+      - mysql-gui
+networks:
+  mysql-gui:
 volumes:
   mysql:
